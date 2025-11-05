@@ -1,0 +1,30 @@
+syntax= "proto3";
+
+package main;
+
+message result {
+    int32 num = 1;
+}
+
+message args{
+    int32 numOne = 1;
+    int32 numTwo = 2;
+}
+
+message Operacao {
+    float num1 = 1;
+    float num2 = 2;
+}
+
+message Resultado {
+    float valor = 1;
+}
+
+service api {
+    
+    rpc sum(Operacao) returns (Resultado);
+    rpc sub(Operacao) returns (Resultado);
+    rpc mult(Operacao) returns (Resultado);
+    rpc divide(Operacao) returns (Resultado);
+}
+
