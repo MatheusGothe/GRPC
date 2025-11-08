@@ -1,3 +1,2 @@
 venv
-/fontes/grpc/__pycache__
-/fontes/grpc/Minerador/__pycache__
+__pycache__/

@@ -4,6 +4,9 @@ import mine_grpc_pb2_grpc
 import inquirer
 import hashlib
 import threading
+import time
+import sys
+import random
 
 SERVER_ADDRESS = 'localhost:8080'
 CLIENT_ID = 1  # cada cliente pode ter um ID único
@@ -11,34 +14,40 @@ CLIENT_ID = 1  # cada cliente pode ter um ID único
 def sha1_hash(solution):
     return hashlib.sha1(solution.encode()).hexdigest()
 
+
 def mine_challenge(challenge_value):
-    """
-    Função simples de mineração: tenta soluções numéricas até encontrar
-    um hash SHA-1 que satisfaça a condição challenge (ex: hash começando com '0'*challenge)
-    """
     target_prefix = '0' * challenge_value
     found = None
+    start_time = time.time()
 
-    def worker(start, step):
+    def worker():
         nonlocal found
-        i = start
         while found is None:
-            candidate = str(i)
-            hash_val = sha1_hash(candidate)
+            # gera um número aleatório grande (64 bits por exemplo)
+            candidate_int = random.getrandbits(64)
+            candidate = str(candidate_int)
+            hash_val = hashlib.sha1(candidate.encode()).hexdigest()
             if hash_val.startswith(target_prefix):
                 found = candidate
                 break
-            i += step
 
-    # Cria threads para minerar
     threads = []
-    for t in range(4):  # 4 threads
-        thread = threading.Thread(target=worker, args=(t, 4))
-        thread.start()
-        threads.append(thread)
+    for _ in range(4):  # quantidade de threads
+        t = threading.Thread(target=worker)
+        t.start()
+        threads.append(t)
 
-    for thread in threads:
-        thread.join()
+    while found is None:
+        elapsed = time.time() - start_time
+        sys.stdout.write(f"\rMinerando há {elapsed:.2f} segundos...")
+        sys.stdout.flush()
+        time.sleep(0.2)
+
+    for t in threads:
+        t.join()
+
+    total_time = time.time() - start_time
+    print(f"\nTempo total de mineração: {total_time:.2f} segundos")
 
     return found
 
