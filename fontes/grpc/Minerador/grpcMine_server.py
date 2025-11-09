@@ -15,9 +15,10 @@ clients = set()
 clients_lock = threading.Lock()
 winners_history = []
 def generate_challenge():
-    """Gera desafio aleatório entre 1 e 20"""
-    #value = random.randint(1, 5)
-    value = 5
+    """Gera desafio aleatório entre 1 e 6"""
+    value = random.randint(1, 6)
+    # se quiser setar padrão
+    # value = 5
     print(f"[DEBUG] Challenge gerado: {value}")
     return value
 
